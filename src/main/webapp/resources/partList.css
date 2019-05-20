@@ -1,0 +1,32 @@
+table {
+    border-collapse: collapse;  /* Убираем двойные границы между ячейками */
+    vertical-align: middle;     /* Выравнивание по высоте по центру */
+    width: 82%;                 /* Ширина таблицы */
+    margin: auto;               /* Отступы */
+}
+table.list {
+    width: 80%;                 /* Ширина таблицы */
+    margin: auto;               /* Отступы */
+}
+th {
+    border: 1px solid #8c8c8c;  /* Рамка вокруг ячеек */
+    padding: 5px;               /* Поля вокруг текста */
+}
+td {
+    padding: 5px;               /* Поля вокруг текста */
+}
+td.bordered {
+    border: 1px solid #8c8c8c;  /* Рамка вокруг ячеек */
+}
+td.filter {
+    text-align: right;
+}
+input.findInput {
+    width: 400px;
+}
+a:link {
+    color: #000097; /* Цвет ссылок */
+}
+a:visited {
+    color: #000097; /* Цвет посещенных ссылок */
+}

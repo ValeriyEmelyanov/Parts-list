@@ -1,0 +1,62 @@
+package emelyanov.partslist.model;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "part")
+public class Part {
+
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "essential")
+    boolean essential;
+    private int quantity;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isEssential() {
+        return essential;
+    }
+
+    public void setEssential(boolean essential) {
+        this.essential = essential;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    @Override
+    public String toString() {
+        return "Part{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", essential=" + essential +
+                ", quantity=" + quantity +
+                '}';
+    }
+}
