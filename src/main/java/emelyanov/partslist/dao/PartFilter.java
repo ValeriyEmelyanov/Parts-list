@@ -1,5 +1,8 @@
 package emelyanov.partslist.dao;
 
+/**
+ * Перечисление режимов фильтрации.
+ */
 public enum PartFilter {
     ALL(
             "from Part",

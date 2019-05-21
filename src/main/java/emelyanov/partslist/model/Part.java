@@ -2,6 +2,9 @@ package emelyanov.partslist.model;
 
 import javax.persistence.*;
 
+/**
+ * Модель - абстрагирует сущность детали для компьютера.
+ */
 @Entity
 @Table(name = "part")
 public class Part {

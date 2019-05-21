@@ -8,6 +8,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * Контроллер - обрабатывает запросы пользователя,
+ * создаёт/изменяет соответствующую модель,
+ * передаёт модель для отображения в представление.
+ */
 @Controller
 public class PartController {
     private PartService partService;
@@ -56,7 +61,7 @@ public class PartController {
     }
 
     /**
-     * Метод получеает страницу редактирования детали
+     * Метод получеает страницу редактирования детали.
      * @param id идентификатор детали
      * @return модель+представление - страница редактирования
      */
@@ -118,9 +123,15 @@ public class PartController {
     public ModelAndView deletePart(@ModelAttribute("id") int id){
         Part part = partService.getById(id);
         if (part != null) {
+            partService.delete(part);
+
+            // Чтобы не остаться на пустой странице.
+            int partSize = partService.size(filter, searchName);
+            int pagesCount = (partSize + 9) / 10;
+            this.page = (this.page > pagesCount ? pagesCount : this.page);
+
             ModelAndView modelAndView = new ModelAndView();
             modelAndView.setViewName(redirectUrl());
-            partService.delete(part);
             return modelAndView;
         }
         return new ModelAndView(redirectUrl());

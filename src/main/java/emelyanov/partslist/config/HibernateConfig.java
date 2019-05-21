@@ -7,7 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -15,6 +14,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+/**
+ * Конфигурация Hibernate.
+ */
 @Configuration
 @ComponentScan(basePackages = "emelyanov.partslist")
 @EnableTransactionManagement
@@ -27,6 +29,10 @@ public class HibernateConfig {
         this.environment = environment;
     }
 
+    /**
+     * Возвращает свойства Hibernate.
+     * @return свойства
+     */
     private Properties hibernateProperties() {
         Properties properties = new Properties();
         properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
@@ -34,6 +40,10 @@ public class HibernateConfig {
         return properties;
     }
 
+    /**
+     * Возвращает источник данных, используется для создания соединения с базой данных.
+     * @return
+     */
     @Bean
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
@@ -44,6 +54,10 @@ public class HibernateConfig {
         return dataSource;
     }
 
+    /**
+     * Возвращает фабрику сессий, с помощью которых осуществляются операции с объектами-сущностями.
+     * @return фарика сессий
+     */
     @Bean
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
@@ -53,6 +67,10 @@ public class HibernateConfig {
         return sessionFactory;
     }
 
+    /**
+     * Возвращает менеджер транзакций.
+     * @return менеджер транзакций
+     */
     @Bean
     public HibernateTransactionManager transactionManager() {
         HibernateTransactionManager transactionManager = new HibernateTransactionManager();

@@ -5,6 +5,9 @@ import emelyanov.partslist.model.Part;
 
 import java.util.List;
 
+/**
+ * Интерфейс сервисного слоя.
+ */
 public interface PartService {
     List<Part> partsList(int page, PartFilter filter, String searchName);
     void add(Part part);

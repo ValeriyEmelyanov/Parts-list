@@ -4,6 +4,9 @@ import emelyanov.partslist.model.Part;
 
 import java.util.List;
 
+/**
+ * Интерфейс доступа к данным
+ */
 public interface PartDAO {
     List<Part> partsList(int page, PartFilter filter, String searchName);
     void add(Part part);

@@ -8,37 +8,47 @@ import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
+/**
+ * Инициализация приложения
+ */
 public class AppInit extends AbstractAnnotationConfigDispatcherServletInitializer {
+    /**
+     * Регистритует конфигурацию Hibernate.
+     * @return массив классов
+     */
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return new Class[]{HibernateConfig.class};
     }
 
+    /**
+     * Регистрирует WebConfig.
+     * @return массив классов
+     */
     @Override
     protected Class<?>[] getServletConfigClasses() {
         return new Class[]{WebConfig.class};
     }
 
+    /**
+     * Регистрирует адреса.
+     * @return массив адресов
+     */
     @Override
     protected String[] getServletMappings() {
         return new String[]{"/"};
     }
 
+    /**
+     * Возвращает фильтр, для предварительной обработки запросов.
+     * Решает проблемы с кодировкой.
+     * @return массив фильтров
+     */
     @Override
     protected Filter[] getServletFilters() {
         CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
         characterEncodingFilter.setEncoding("UTF-8");
         characterEncodingFilter.setForceEncoding(true);
-        return new Filter[]{};
-    }
-
-    @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
-        super.onStartup(servletContext);
-        FilterRegistration.Dynamic encodingFilter = servletContext.addFilter("encoding-filter",
-                new CharacterEncodingFilter());
-        encodingFilter.setInitParameter("encoding", "UTF-8");
-        encodingFilter.setInitParameter("forceEncoding", "true");
-        encodingFilter.addMappingForUrlPatterns(null, true, "/*");
+        return new Filter[]{characterEncodingFilter};
     }
 }
