@@ -62,6 +62,14 @@
         </c:if>
         </p>
     </form>
+    <p>
+        <c:url value="/" var="url">
+            <c:param name="page" value="${page}"/>
+            <c:param name="filter" value="${filter}"/>
+            <c:param name="searchName" value="${searchName}"/>
+        </c:url>
+        <a href="${url}">Вернуться в список деталей</a>
+    </p>
     </div>
 </body>
 </html>

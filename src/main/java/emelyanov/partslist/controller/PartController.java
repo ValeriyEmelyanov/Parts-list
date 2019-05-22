@@ -8,6 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * Контроллер - обрабатывает запросы пользователя,
  * создаёт/изменяет соответствующую модель,
@@ -49,14 +52,22 @@ public class PartController {
         int partSize = partService.size(filter, searchName);
         int pagesCount = (partSize + 9) / 10;
 
+        if (this.page < 1) {
+            this.page = 1;
+        }
+
+        if (this.page > pagesCount) {
+            this.page = pagesCount;
+        }
+
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("partsList");
         modelAndView.addObject("partsList", partService.partsList(page, filter, searchName));
         modelAndView.addObject("pagesCount", pagesCount);
         modelAndView.addObject("page", page);
         modelAndView.addObject("filter", filter);
-        modelAndView.addObject("ability", partService.ability());
         modelAndView.addObject("searchName", searchName);
+        modelAndView.addObject("ability", partService.ability());
         return modelAndView;
     }
 
@@ -72,6 +83,9 @@ public class PartController {
             ModelAndView modelAndView = new ModelAndView();
             modelAndView.setViewName("editPage");
             modelAndView.addObject("part", part);
+            modelAndView.addObject("page", page);
+            modelAndView.addObject("filter", filter);
+            modelAndView.addObject("searchName", searchName);
             return modelAndView;
         }
         return new ModelAndView(redirectUrl());
@@ -98,6 +112,9 @@ public class PartController {
     public ModelAndView addPage() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("editPage");
+        modelAndView.addObject("page", page);
+        modelAndView.addObject("filter", filter);
+        modelAndView.addObject("searchName", searchName);
         return modelAndView;
     }
 
@@ -137,9 +154,18 @@ public class PartController {
         return new ModelAndView(redirectUrl());
     }
 
+    /**
+     * Возвращает адрес страницы со списком деталей.
+     * @return адрес страницы со списком деталей
+     */
     private String redirectUrl() {
-        return String.format("redirect:/?page=%s&filter=%s",
-                page,
-                filter);
+        try {
+            return String.format("redirect:/?page=%s&filter=%s&searchName=%s",
+                    page,
+                    filter,
+                    URLEncoder.encode(searchName, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            return "redirect:/";
+        }
     }
 }
