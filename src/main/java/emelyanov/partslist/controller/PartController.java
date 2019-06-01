@@ -3,6 +3,8 @@ package emelyanov.partslist.controller;
 import emelyanov.partslist.dao.PartFilter;
 import emelyanov.partslist.model.Part;
 import emelyanov.partslist.service.PartService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,7 @@ public class PartController {
     private int page;
     private PartFilter filter;
     private String searchName;
+    public final static Logger LOGGER = LoggerFactory.getLogger(PartController.class);
 
     @Autowired
     public void setPartService(PartService partService) {
@@ -37,6 +40,8 @@ public class PartController {
     public ModelAndView partsList(@RequestParam(defaultValue = "1") int page,
                                   @RequestParam(defaultValue = "ALL") PartFilter filter,
                                   @RequestParam(defaultValue = "") String searchName) {
+        LOGGER.info("Main page was requested: page={}, filter={}, searchName={}",
+                page, filter, searchName);
         this.page = page;
         this.filter = filter;
         this.searchName = searchName;
@@ -78,6 +83,7 @@ public class PartController {
      */
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public ModelAndView editPage(@PathVariable("id") int id) {
+        LOGGER.info("Edit page was requested: id={}", id);
         Part part = partService.getById(id);
         if (part != null) {
             ModelAndView modelAndView = new ModelAndView();
@@ -87,6 +93,8 @@ public class PartController {
             modelAndView.addObject("filter", filter);
             modelAndView.addObject("searchName", searchName);
             return modelAndView;
+        } else {
+            LOGGER.warn("Part is not found: id={}", id);
         }
         return new ModelAndView(redirectUrl());
     }
@@ -98,6 +106,7 @@ public class PartController {
      */
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ModelAndView updatePart(@ModelAttribute("part") Part part){
+        LOGGER.info("Update request: {}", part);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(redirectUrl());
         partService.update(part);
@@ -110,6 +119,7 @@ public class PartController {
      */
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public ModelAndView addPage() {
+        LOGGER.info("Add page was requested.");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("editPage");
         modelAndView.addObject("page", page);
@@ -125,6 +135,7 @@ public class PartController {
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ModelAndView addPart(@ModelAttribute("part") Part part) {
+        LOGGER.info("Add request:", part);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(redirectUrl());
         partService.add(part);
@@ -138,6 +149,7 @@ public class PartController {
      */
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public ModelAndView deletePart(@ModelAttribute("id") int id){
+        LOGGER.info("Delete request: id={}", id);
         Part part = partService.getById(id);
         if (part != null) {
             partService.delete(part);
@@ -150,6 +162,8 @@ public class PartController {
             ModelAndView modelAndView = new ModelAndView();
             modelAndView.setViewName(redirectUrl());
             return modelAndView;
+        } else {
+            LOGGER.warn("Part is not found: id={}", id);
         }
         return new ModelAndView(redirectUrl());
     }

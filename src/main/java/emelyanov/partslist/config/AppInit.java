@@ -9,6 +9,7 @@ import javax.servlet.Filter;
  * Инициализация приложения
  */
 public class AppInit extends AbstractAnnotationConfigDispatcherServletInitializer {
+
     /**
      * Регистритует конфигурацию Hibernate.
      * @return массив классов
