@@ -18,7 +18,7 @@ import java.util.List;
 public class PartDAOImpl implements PartDAO {
     private static final int PAGE_RECORD_COUNT = 10;
     private SessionFactory sessionFactory;
-    public final static Logger LOGGER = LoggerFactory.getLogger(PartDAOImpl.class);
+    public final static Logger logger = LoggerFactory.getLogger(PartDAOImpl.class);
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -40,7 +40,7 @@ public class PartDAOImpl implements PartDAO {
         if (filter == PartFilter.NAME_SEARCH) {
             query.setParameter("nameParam", "%" + searchName + "%");
         }
-        LOGGER.info("Getting part list. Page: {}", page);
+        logger.info("Getting part list. Page: {}", page);
         return query
                 .setFirstResult(PAGE_RECORD_COUNT * (page - 1))
                 .setMaxResults(PAGE_RECORD_COUNT)
@@ -55,7 +55,7 @@ public class PartDAOImpl implements PartDAO {
     public void add(Part part) {
         Session session = sessionFactory.getCurrentSession();
         session.persist(part);
-        LOGGER.info("Part is added. Details: {}", part);
+        logger.info("Part is added. Details: {}", part);
     }
 
     /**
@@ -66,7 +66,7 @@ public class PartDAOImpl implements PartDAO {
     public void update(Part part) {
         Session session = sessionFactory.getCurrentSession();
         session.update(part);
-        LOGGER.info("Part is updated. Details: {}", part);
+        logger.info("Part is updated. Details: {}", part);
     }
 
     /**
@@ -77,7 +77,7 @@ public class PartDAOImpl implements PartDAO {
     public void delete(Part part) {
         Session session = sessionFactory.getCurrentSession();
         session.delete(part);
-        LOGGER.info("Part id removed. Details: {}", part);
+        logger.info("Part id removed. Details: {}", part);
     }
 
     /**
@@ -89,7 +89,7 @@ public class PartDAOImpl implements PartDAO {
     public Part getById(int id) {
         Session session = sessionFactory.getCurrentSession();
         Part part = session.get(Part.class, id);
-        LOGGER.info("Getting part by id: {}. Details: {}", id, part);
+        logger.info("Getting part by id: {}. Details: {}", id, part);
         return part;
     }
 
@@ -109,7 +109,7 @@ public class PartDAOImpl implements PartDAO {
         int size = query
                 .getSingleResult()
                 .intValue();
-        LOGGER.info("Getting list size: {}. Filter: {} {}", size, filter,
+        logger.info("Getting list size: {}. Filter: {} {}", size, filter,
                 ((searchName != null && !searchName.isEmpty()) ? (". Search: " + searchName) : ""));
         return size;
     }
@@ -125,7 +125,7 @@ public class PartDAOImpl implements PartDAO {
                 .createQuery("select min(quantity) from Part where essential = true", Number.class)
                 .getSingleResult()
                 .intValue();
-        LOGGER.info("Getting ability: {}", ability);
+        logger.info("Getting ability: {}", ability);
         return ability;
     }
 }
