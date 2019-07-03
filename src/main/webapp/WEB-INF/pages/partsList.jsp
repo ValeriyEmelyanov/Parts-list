@@ -32,7 +32,7 @@
                 </c:url>
                 <a href="${url}">Необходимые</a>
                 <c:url value="/" var="url">
-                    <c:param name="filter" value="NOT_ESSENTIAL"/>
+                    <c:param name="filter" value="OPTIONAL"/>
                 </c:url>
                 <a href="${url}">Опциональные</a>
                 <i>(текущий ${filter.title})</i>

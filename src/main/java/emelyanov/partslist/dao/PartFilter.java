@@ -14,7 +14,7 @@ public enum PartFilter {
             "select count(*) from Part where essential = true",
             "Необходимые"
     ),
-    NOT_ESSENTIAL(
+    OPTIONAL(
             "from Part where essential = false",
             "select count(*) from Part where essential = false",
             "Опциональные"

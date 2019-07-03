@@ -19,7 +19,19 @@ public class Part {
 
     @Column(name = "essential")
     boolean essential;
+
+    @Column(name = "quantity")
     private int quantity;
+
+    public Part() {
+    }
+
+    public Part(int id, String name, boolean essential, int quantity) {
+        this.id = id;
+        this.name = name;
+        this.essential = essential;
+        this.quantity = quantity;
+    }
 
     public int getId() {
         return id;
