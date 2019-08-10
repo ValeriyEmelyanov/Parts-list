@@ -1,6 +1,6 @@
 # CRUD application with Spring MVC, Maven, Hibernate, MySql, Tomcat
 
-## Тестовое задание [JavaRush.ru](javarush.ru)
+## Тестовое задание [JavaRush.ru](https://javarush.ru)
 
 Требуемые технологии:
 - Maven (для сборки проекта);
