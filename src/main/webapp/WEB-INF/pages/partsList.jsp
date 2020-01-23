@@ -52,8 +52,21 @@
                 <td class="bordered">${part.essential ? 'Да' : 'Нет'}</td>
                 <td class="bordered">${part.quantity}</td>
                 <td class="bordered">
-                    <a href="/edit/${part.id}">Изменить</a>
-                    <a href="/delete/${part.id}">Удалить</a>
+                    <c:url value="/edit/${part.id}" var="url">
+                        <c:param name="page" value="${page}"/>
+                        <%--                        <c:param name="filter" value="${filter}"/>--%>
+                        <%--                        <c:param name="searchName" value="${searchName}"/>--%>
+                    </c:url>
+                    <a href="${url}">Изменить</a>
+<%--                    <a href="/edit/${part.id}">Изменить</a>--%>
+                    <c:url value="/delete/${part.id}" var="url">
+                        <c:param name="page" value="${page}"/>
+<%--                        <c:param name="filter" value="${filter}"/>--%>
+<%--                        <c:param name="searchName" value="${searchName}"/>--%>
+                    </c:url>
+                    <a href="${url}">Удалить</a>
+<%--                    <a href="/delete/${part.id}">Удалить</a>--%>
+
                 </td>
             </tr>
         </c:forEach>
@@ -80,7 +93,9 @@
         </c:forEach>
         &nbsp;<i>(текущая ${page})</i>
     </p>
-    <c:url value="/add" var="add"/>
+    <c:url value="/add" var="add">
+        <c:param name="page" value="${page}"/>
+    </c:url>
     <a href="${add}">Добавить новую деталь</a>
 </body>
 </html>

@@ -33,13 +33,15 @@
     </c:if>
     <div class="main">
     <form id="edit" action="${var}" accept-charset="UTF-8" onsubmit='return validateForm();' method="POST">
+        <input form="edit" type="hidden" name="page" value="${page}">
         <c:if test="${!empty part.name}">
             <input form="edit" type="hidden" name="id" value="${part.id}">
         </c:if>
         <div class="field">
             <label for="name">Наименование</label>
             <input form="edit" class="inputfield" type="text" name="name" id="name" value="${part.name}" required>
-        </div><div class="field">
+        </div>
+        <div class="field">
             <label>Необходимость</label>
             <c:if test="${part.essential == true}">
                 <input form="edit" type="radio" name="essential" value="true" checked>Да
@@ -49,7 +51,8 @@
                 <input form="edit" type="radio" name="essential" value="true">Да
                 <input form="edit" type="radio" name="essential" value="false" checked>Нет
             </c:if>
-        </div><div class="field">
+        </div>
+        <div class="field">
             <label for="quantity">Количество</label>
             <input form="edit" class="inputfield" type="text" name="quantity" id="quantity" value="${part.quantity}" pattern="[0-9]{,10}">
         </div>

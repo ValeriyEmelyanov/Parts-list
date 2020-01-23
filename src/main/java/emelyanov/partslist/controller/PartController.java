@@ -21,7 +21,6 @@ import java.net.URLEncoder;
 @Controller
 public class PartController {
     private PartService partService;
-    private int page;
     private PartFilter filter;
     private String searchName;
     private final static Logger logger = LoggerFactory.getLogger(PartController.class);
@@ -33,16 +32,17 @@ public class PartController {
 
     /**
      * Возвращает модель-представление главной страницы, на которую выводится список деталей.
+     *
      * @param page номер страницы
      * @return модель + предтавление главной сраницы
      */
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView partsList(@RequestParam(defaultValue = "1") int page,
-                                  @RequestParam(defaultValue = "ALL") PartFilter filter,
-                                  @RequestParam(defaultValue = "") String searchName) {
+    @GetMapping("/")
+    public ModelAndView partsList(
+            @RequestParam(defaultValue = "1", required = false) int page,
+            @RequestParam(defaultValue = "ALL") PartFilter filter,
+            @RequestParam(defaultValue = "") String searchName) {
         logger.info("Main page was requested: page={}, filter={}, searchName={}",
                 page, filter, searchName);
-        this.page = page;
         this.filter = filter;
         this.searchName = searchName;
 
@@ -57,12 +57,10 @@ public class PartController {
         int partSize = partService.size(filter, searchName);
         int pagesCount = (partSize + 9) / 10;
 
-        if (this.page < 1) {
-            this.page = 1;
-        }
-
-        if (this.page > pagesCount) {
-            this.page = pagesCount;
+        if (page < 1) {
+            page = 1;
+        } else if (page > pagesCount) {
+            page = pagesCount;
         }
 
         ModelAndView modelAndView = new ModelAndView();
@@ -78,11 +76,14 @@ public class PartController {
 
     /**
      * Метод получеает страницу редактирования детали.
+     *
      * @param id идентификатор детали
      * @return модель+представление - страница редактирования
      */
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public ModelAndView editPage(@PathVariable("id") int id) {
+    @GetMapping("/edit/{id}")
+    public ModelAndView editPage(
+            @PathVariable("id") int id,
+            @RequestParam(defaultValue = "1", required = false) int page) {
         logger.info("Edit page was requested: id={}", id);
         Part part = partService.getById(id);
         if (part != null) {
@@ -96,29 +97,34 @@ public class PartController {
         } else {
             logger.warn("Part is not found: id={}", id);
         }
-        return new ModelAndView(redirectUrl());
+        return new ModelAndView(redirectUrl(page));
     }
 
     /**
      * Метод изменяет деталь.
+     *
      * @param part деталь
      * @return модель+представление - перенаправление на главную страницу
      */
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public ModelAndView updatePart(@ModelAttribute("part") Part part){
+    @PostMapping("/edit")
+    public ModelAndView updatePart(
+            @ModelAttribute("part") Part part,
+            @RequestParam(defaultValue = "1", required = false) int page) {
         logger.info("Update request: {}", part);
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName(redirectUrl());
+        modelAndView.setViewName(redirectUrl(page));
         partService.update(part);
         return modelAndView;
     }
 
     /**
      * Метод получает страницу добавления/редактирования детали.
+     *
      * @return модель+представление - страница редактирования
      */
-    @RequestMapping(value = "/add", method = RequestMethod.GET)
-    public ModelAndView addPage() {
+    @GetMapping("/add")
+    public ModelAndView addPage(
+            @RequestParam(defaultValue = "1", required = false) int page) {
         logger.info("Add page was requested.");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("editPage");
@@ -130,25 +136,31 @@ public class PartController {
 
     /**
      * Метод добавляет новую деталь.
+     *
      * @param part деталь
      * @return модель+представление - перенаправление на главную страницу
      */
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ModelAndView addPart(@ModelAttribute("part") Part part) {
+    @PostMapping("/add")
+    public ModelAndView addPart(
+            @ModelAttribute("part") Part part,
+            @RequestParam(defaultValue = "1", required = false) int page) {
         logger.info("Add request:", part);
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName(redirectUrl());
+        modelAndView.setViewName(redirectUrl(page));
         partService.add(part);
         return modelAndView;
     }
 
     /**
      * Метод удаленяет делаль по идентификатору.
-     * @param id иденификато детали
+     *
+     * @param id иденификатор детали
      * @return модель+представление - перенаправление на главную страницу
      */
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-    public ModelAndView deletePart(@ModelAttribute("id") int id){
+    @GetMapping("/delete/{id}")
+    public ModelAndView deletePart(
+            @ModelAttribute("id") int id,
+            @RequestParam(defaultValue = "1", required = false) int page) {
         logger.info("Delete request: id={}", id);
         Part part = partService.getById(id);
         if (part != null) {
@@ -157,22 +169,23 @@ public class PartController {
             // Чтобы не остаться на пустой странице.
             int partSize = partService.size(filter, searchName);
             int pagesCount = (partSize + 9) / 10;
-            this.page = (this.page > pagesCount ? pagesCount : this.page);
+            page = page > pagesCount ? pagesCount : page;
 
             ModelAndView modelAndView = new ModelAndView();
-            modelAndView.setViewName(redirectUrl());
+            modelAndView.setViewName(redirectUrl(page));
             return modelAndView;
         } else {
             logger.warn("Part is not found: id={}", id);
         }
-        return new ModelAndView(redirectUrl());
+        return new ModelAndView(redirectUrl(page));
     }
 
     /**
      * Возвращает адрес страницы со списком деталей.
+     *
      * @return адрес страницы со списком деталей
      */
-    private String redirectUrl() {
+    private String redirectUrl(int page) {
         try {
             return String.format("redirect:/?page=%s&filter=%s&searchName=%s",
                     page,
