@@ -21,8 +21,6 @@ import java.net.URLEncoder;
 @Controller
 public class PartController {
     private PartService partService;
-    private PartFilter filter;
-    private String searchName;
     private final static Logger logger = LoggerFactory.getLogger(PartController.class);
 
     @Autowired
@@ -34,24 +32,24 @@ public class PartController {
      * Возвращает модель-представление главной страницы, на которую выводится список деталей.
      *
      * @param page номер страницы
+     * @param filter фильтр списка
+     * @param searchName строка поиска по наименованию детали
      * @return модель + предтавление главной сраницы
      */
     @GetMapping("/")
     public ModelAndView partsList(
             @RequestParam(defaultValue = "1", required = false) int page,
-            @RequestParam(defaultValue = "ALL") PartFilter filter,
-            @RequestParam(defaultValue = "") String searchName) {
+            @RequestParam(defaultValue = "ALL", required = false) PartFilter filter,
+            @RequestParam(defaultValue = "", required = false) String searchName) {
         logger.info("Main page was requested: page={}, filter={}, searchName={}",
                 page, filter, searchName);
-        this.filter = filter;
-        this.searchName = searchName;
 
         if ((searchName == null || searchName.isEmpty()) && filter == PartFilter.NAME_SEARCH) {
-            this.filter = PartFilter.ALL;
+            filter = PartFilter.ALL;
         }
 
         if (filter != PartFilter.NAME_SEARCH) {
-            this.searchName = "";
+            searchName = "";
         }
 
         int partSize = partService.size(filter, searchName);
@@ -71,6 +69,7 @@ public class PartController {
         modelAndView.addObject("filter", filter);
         modelAndView.addObject("searchName", searchName);
         modelAndView.addObject("ability", partService.ability());
+
         return modelAndView;
     }
 
@@ -78,13 +77,19 @@ public class PartController {
      * Метод получеает страницу редактирования детали.
      *
      * @param id идентификатор детали
+     * @param page номер страницы
+     * @param filter фильтр списка
+     * @param searchName строка поиска по наименованию детали
      * @return модель+представление - страница редактирования
      */
     @GetMapping("/edit/{id}")
     public ModelAndView editPage(
             @PathVariable("id") int id,
-            @RequestParam(defaultValue = "1", required = false) int page) {
+            @RequestParam(defaultValue = "1", required = false) int page,
+            @RequestParam(defaultValue = "ALL", required = false) PartFilter filter,
+            @RequestParam(defaultValue = "", required = false) String searchName) {
         logger.info("Edit page was requested: id={}", id);
+
         Part part = partService.getById(id);
         if (part != null) {
             ModelAndView modelAndView = new ModelAndView();
@@ -97,40 +102,55 @@ public class PartController {
         } else {
             logger.warn("Part is not found: id={}", id);
         }
-        return new ModelAndView(redirectUrl(page));
+
+        return new ModelAndView(redirectUrl(page, filter, searchName));
     }
 
     /**
      * Метод изменяет деталь.
      *
      * @param part деталь
+     * @param page номер страницы
+     * @param filter фильтр списка
+     * @param searchName строка поиска по наименованию детали
      * @return модель+представление - перенаправление на главную страницу
      */
     @PostMapping("/edit")
     public ModelAndView updatePart(
             @ModelAttribute("part") Part part,
-            @RequestParam(defaultValue = "1", required = false) int page) {
+            @RequestParam(defaultValue = "1", required = false) int page,
+            @RequestParam(defaultValue = "ALL", required = false) PartFilter filter,
+            @RequestParam(defaultValue = "", required = false) String searchName) {
         logger.info("Update request: {}", part);
+
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName(redirectUrl(page));
+        modelAndView.setViewName(redirectUrl(page, filter, searchName));
         partService.update(part);
+
         return modelAndView;
     }
 
     /**
      * Метод получает страницу добавления/редактирования детали.
      *
+     * @param page номер страницы
+     * @param filter фильтр списка
+     * @param searchName строка поиска по наименованию детали
      * @return модель+представление - страница редактирования
      */
     @GetMapping("/add")
     public ModelAndView addPage(
-            @RequestParam(defaultValue = "1", required = false) int page) {
+            @RequestParam(defaultValue = "1", required = false) int page,
+            @RequestParam(defaultValue = "ALL", required = false) PartFilter filter,
+            @RequestParam(defaultValue = "", required = false) String searchName) {
         logger.info("Add page was requested.");
+
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("editPage");
         modelAndView.addObject("page", page);
         modelAndView.addObject("filter", filter);
         modelAndView.addObject("searchName", searchName);
+
         return modelAndView;
     }
 
@@ -138,16 +158,23 @@ public class PartController {
      * Метод добавляет новую деталь.
      *
      * @param part деталь
+     * @param page номер страницы
+     * @param filter фильтр списка
+     * @param searchName строка поиска по наименованию детали
      * @return модель+представление - перенаправление на главную страницу
      */
     @PostMapping("/add")
     public ModelAndView addPart(
             @ModelAttribute("part") Part part,
-            @RequestParam(defaultValue = "1", required = false) int page) {
+            @RequestParam(defaultValue = "1", required = false) int page,
+            @RequestParam(defaultValue = "ALL", required = false) PartFilter filter,
+            @RequestParam(defaultValue = "", required = false) String searchName) {
         logger.info("Add request:", part);
+
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName(redirectUrl(page));
+        modelAndView.setViewName(redirectUrl(page, filter, searchName));
         partService.add(part);
+
         return modelAndView;
     }
 
@@ -155,13 +182,19 @@ public class PartController {
      * Метод удаленяет делаль по идентификатору.
      *
      * @param id иденификатор детали
+     * @param page номер страницы
+     * @param filter фильтр списка
+     * @param searchName строка поиска по наименованию детали
      * @return модель+представление - перенаправление на главную страницу
      */
     @GetMapping("/delete/{id}")
     public ModelAndView deletePart(
             @ModelAttribute("id") int id,
-            @RequestParam(defaultValue = "1", required = false) int page) {
+            @RequestParam(defaultValue = "1", required = false) int page,
+            @RequestParam(defaultValue = "ALL", required = false) PartFilter filter,
+            @RequestParam(defaultValue = "", required = false) String searchName) {
         logger.info("Delete request: id={}", id);
+
         Part part = partService.getById(id);
         if (part != null) {
             partService.delete(part);
@@ -172,20 +205,25 @@ public class PartController {
             page = page > pagesCount ? pagesCount : page;
 
             ModelAndView modelAndView = new ModelAndView();
-            modelAndView.setViewName(redirectUrl(page));
+            modelAndView.setViewName(redirectUrl(page, filter, searchName));
+
             return modelAndView;
         } else {
             logger.warn("Part is not found: id={}", id);
         }
-        return new ModelAndView(redirectUrl(page));
+
+        return new ModelAndView(redirectUrl(page, filter, searchName));
     }
 
     /**
      * Возвращает адрес страницы со списком деталей.
      *
+     * @param page номер страницы
+     * @param filter фильтр списка
+     * @param searchName строка поиска по наименованию детали
      * @return адрес страницы со списком деталей
      */
-    private String redirectUrl(int page) {
+    private String redirectUrl(int page, PartFilter filter, String searchName) {
         try {
             return String.format("redirect:/?page=%s&filter=%s&searchName=%s",
                     page,

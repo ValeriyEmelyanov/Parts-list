@@ -34,6 +34,8 @@
     <div class="main">
     <form id="edit" action="${var}" accept-charset="UTF-8" onsubmit='return validateForm();' method="POST">
         <input form="edit" type="hidden" name="page" value="${page}">
+        <input form="edit" type="hidden" name="filter" value="${filter}">
+        <input form="edit" type="hidden" name="searchName" value="${searchName}">
         <c:if test="${!empty part.name}">
             <input form="edit" type="hidden" name="id" value="${part.id}">
         </c:if>
